@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.security.SecureRandom;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -19,11 +21,12 @@ public class Board extends JPanel implements ActionListener {
 
     private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
     private final int B_HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.5);
-    private final int DOT_SIZE = 25;
-    private final int ALL_DOTS = 900;
-    private final int RAND_POS = 10;
+    private final int DOT_SIZE = 25; // the same pixel size as image
+    private final int ALL_DOTS = (int) ((B_WIDTH*B_HEIGHT)/(Math.pow(DOT_SIZE, 2)));
     private final int DELAY = 150;
-
+    
+    SecureRandom RAND_POS =  new SecureRandom();
+    
     private final int x[] = new int[ALL_DOTS];
     private final int y[] = new int[ALL_DOTS];
 
@@ -39,9 +42,10 @@ public class Board extends JPanel implements ActionListener {
     private boolean inGame = true;
 
     private Timer timer;
-    private Image ball;
+    private Image bg;
     private Image apple;
     private Image head;
+    private Image body;
     
     private Image l_head;
     private Image r_head;
@@ -49,7 +53,6 @@ public class Board extends JPanel implements ActionListener {
     private Image d_head;
 
     public Board() {
-        
         initBoard();
     }
     
@@ -65,13 +68,17 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void loadImages() {
-
-        ImageIcon iid = new ImageIcon("resources/snakeimage.png");
-        ball = iid.getImage();
-
+    	
+    	//Apple image
         ImageIcon iia = new ImageIcon("resources/apple.png");
         apple = iia.getImage();
         
+        //Background image
+        bg = Toolkit.getDefaultToolkit().createImage("resources/bg.jpg");
+        
+        //Snake get images
+        ImageIcon bd = new ImageIcon("resources/snakeimage.png");
+        body = bd.getImage();
         ImageIcon lh = new ImageIcon("resources/leftmouth.png");
         l_head = lh.getImage();
         ImageIcon rh = new ImageIcon("resources/rightmouth.png");
@@ -81,7 +88,7 @@ public class Board extends JPanel implements ActionListener {
         ImageIcon dh = new ImageIcon("resources/downmouth.png");
         d_head = dh.getImage();
         
-        head = r_head;
+        head = r_head; // default head for the snake
         
     }
 
@@ -103,7 +110,8 @@ public class Board extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        
+        
         doDrawing(g);
     }
     
@@ -119,14 +127,14 @@ public class Board extends JPanel implements ActionListener {
             g.setFont(small);
             g.drawString(score_msg, (B_WIDTH - metr.stringWidth(score_msg)) / 2, (B_HEIGHT - metr.stringWidth(score_msg)) / 10);
             
-            
+            g.drawImage(bg, 0, 0, null);
             g.drawImage(apple, apple_x, apple_y, this);
 
             for (int z = 0; z < dots; z++) {
                 if (z == 0) {
                     g.drawImage(head, x[z], y[z], this);
                 } else {
-                    g.drawImage(ball, x[z], y[z], this);
+                    g.drawImage(body, x[z], y[z], this);
                 }
             }
 
@@ -217,11 +225,12 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void locateApple() {
-
-        int r = (int) (Math.random() * RAND_POS);
+    	
+    	
+        int r = (int) (Math.random() * RAND_POS.nextInt(DOT_SIZE));
         apple_x = ((r * DOT_SIZE));
 
-        r = (int) (Math.random() * RAND_POS);
+        r = (int) (Math.random() * RAND_POS.nextInt(DOT_SIZE));
         apple_y = ((r * DOT_SIZE));
     }
 
@@ -229,7 +238,6 @@ public class Board extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (inGame) {
-
             checkApple();
             checkCollision();
             move();
