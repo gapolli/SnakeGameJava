@@ -17,8 +17,8 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
-    private final int B_WIDTH = 500;
-    private final int B_HEIGHT = 500;
+    private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
+    private final int B_HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.5);
     private final int DOT_SIZE = 25;
     private final int ALL_DOTS = 900;
     private final int RAND_POS = 10;
@@ -30,6 +30,7 @@ public class Board extends JPanel implements ActionListener {
     private int dots;
     private int apple_x;
     private int apple_y;
+    private int score = 0;
 
     private boolean leftDirection = false;
     private boolean rightDirection = true;
@@ -41,6 +42,11 @@ public class Board extends JPanel implements ActionListener {
     private Image ball;
     private Image apple;
     private Image head;
+    
+    private Image l_head;
+    private Image r_head;
+    private Image u_head;
+    private Image d_head;
 
     public Board() {
         
@@ -63,11 +69,20 @@ public class Board extends JPanel implements ActionListener {
         ImageIcon iid = new ImageIcon("resources/snakeimage.png");
         ball = iid.getImage();
 
-        ImageIcon iia = new ImageIcon("resources/enemy.png");
+        ImageIcon iia = new ImageIcon("resources/apple.png");
         apple = iia.getImage();
-
-        ImageIcon iih = new ImageIcon("resources/rightmouth.png");
-        head = iih.getImage();
+        
+        ImageIcon lh = new ImageIcon("resources/leftmouth.png");
+        l_head = lh.getImage();
+        ImageIcon rh = new ImageIcon("resources/rightmouth.png");
+        r_head = rh.getImage();
+        ImageIcon uh = new ImageIcon("resources/upmouth.png");
+        u_head = uh.getImage();
+        ImageIcon dh = new ImageIcon("resources/downmouth.png");
+        d_head = dh.getImage();
+        
+        head = r_head;
+        
     }
 
     private void initGame() {
@@ -95,7 +110,16 @@ public class Board extends JPanel implements ActionListener {
     private void doDrawing(Graphics g) {
         
         if (inGame) {
+        	
+        	String score_msg = score + "";
+            Font small = new Font("Comic Sans", Font.BOLD, 24);
+            FontMetrics metr = getFontMetrics(small);
 
+            g.setColor(Color.white);
+            g.setFont(small);
+            g.drawString(score_msg, (B_WIDTH - metr.stringWidth(score_msg)) / 2, (B_HEIGHT - metr.stringWidth(score_msg)) / 10);
+            
+            
             g.drawImage(apple, apple_x, apple_y, this);
 
             for (int z = 0; z < dots; z++) {
@@ -117,7 +141,7 @@ public class Board extends JPanel implements ActionListener {
     private void gameOver(Graphics g) {
         
         String msg = "Game Over";
-        Font small = new Font("Helvetica", Font.BOLD, 14);
+        Font small = new Font("Comic Sans", Font.BOLD, 20);
         FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
@@ -128,9 +152,9 @@ public class Board extends JPanel implements ActionListener {
     private void checkApple() {
 
         if ((x[0] == apple_x) && (y[0] == apple_y)) {
-
             dots++;
             locateApple();
+            score++;
         }
     }
 
@@ -143,18 +167,22 @@ public class Board extends JPanel implements ActionListener {
 
         if (leftDirection) {
             x[0] -= DOT_SIZE;
+            head = l_head;
         }
 
         if (rightDirection) {
             x[0] += DOT_SIZE;
+            head = r_head;
         }
 
         if (upDirection) {
             y[0] -= DOT_SIZE;
+            head = u_head;
         }
 
         if (downDirection) {
             y[0] += DOT_SIZE;
+            head = d_head;
         }
     }
 
