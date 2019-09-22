@@ -22,11 +22,7 @@ public class StartGame {
 		try 
 		{
 			MainMenu main = new MainMenu(" Snake Game ");
-			main.setVisible(true);
-			
-			Board board = new Board(null); 
-			board.setVisible(true);
-			
+			main.setVisible(true);			
 		}
 		catch(HeadlessException exception) 
 		{

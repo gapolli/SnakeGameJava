@@ -63,7 +63,7 @@ public class MainMenu extends JFrame implements ActionListener{
 	private void initializeComponents() {
 		this.panelStatus = new JPanel();
 		
-        btn_Start = new JButton("Start the game");
+        btn_Start = new JButton("Start Game");
        
         btn_Start.setVerticalTextPosition(AbstractButton.CENTER);
         btn_Start.setHorizontalTextPosition(AbstractButton.CENTER); //aka LEFT, for left-to-right locales
@@ -93,7 +93,11 @@ public class MainMenu extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
         if (action.equals("start")) {
-
+        	System.out.println("Game is about to start!");
+        	Snake snake = new Snake();
+        	this.setVisible(false);
+        	snake.setVisible(true);
+        	
         }
 		
 	}
