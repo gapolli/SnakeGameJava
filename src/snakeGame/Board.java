@@ -22,7 +22,8 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
-    private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
+//    private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
+	private final int B_WIDTH = 845;
     private final int B_HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.5);
     private final int DOT_SIZE = 25; // the same pixel size as image
     private final int ALL_DOTS = (int) ((B_WIDTH*B_HEIGHT)/(Math.pow(DOT_SIZE, 2)));
@@ -30,7 +31,7 @@ public class Board extends JPanel implements ActionListener {
     
     private JPanel panelTitle;
     
-    private final int RAND_POS = 29;
+    private final int RAND_POS = 25;
     
     private SecureRandom rand = new SecureRandom();
         
@@ -41,7 +42,9 @@ public class Board extends JPanel implements ActionListener {
     private int apple_x = B_WIDTH / 2;
     private int apple_y = B_HEIGHT / 2;
     private int score = 0;
-
+    
+    private String difficulty = "Easy";
+    
     private boolean leftDirection = false;
     private boolean rightDirection = true;
     private boolean upDirection = false;
@@ -50,22 +53,31 @@ public class Board extends JPanel implements ActionListener {
 
     private Timer timer;
 
+    private Image title;
     private Image bg;
     private Image apple;
     private Image head;
     private Image body;
-    private Image title;
-    
     private Image l_head;
     private Image r_head;
     private Image u_head;
     private Image d_head;
     
-    Board board;
-
     public Board(int difficult) {
-    	DELAY = DELAY / difficult;  
-        initBoard();             
+    	DELAY = DELAY / difficult;    
+    	setDifficulty(difficult);
+        initBoard();
+        
+        System.out.printf("Screen size: ( %d , %d )\n" , B_WIDTH , B_HEIGHT);  
+    }
+    
+    private void setDifficulty(int d) {
+    	switch (d) {
+    	case 1 : difficulty = "Easy"; break;
+    	case 2 : difficulty = "Medium"; break;
+    	case 3 : difficulty = "Hard"; break;
+    	case 4 : difficulty = "Impossible"; break;
+    	}
     }
     
     private void initBoard() {
@@ -161,14 +173,13 @@ public class Board extends JPanel implements ActionListener {
     }
     
     private void statistics(Graphics g){
-    	String score_msg = "Score: " + score ;
+    	String score_msg = "Difficulty: " + difficulty + " Score: " + score;
         Font small = new Font("Comic Sans", Font.BOLD, 24);
         FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
         g.drawString(score_msg, 20, 35);
-       
     }
 
     private void gameOver(Graphics g) {
@@ -176,42 +187,54 @@ public class Board extends JPanel implements ActionListener {
         String msg = "Game Over";
         String msg2 = "Press \"R\" to retry or \"M\" to go to Main Menu";
         
-        Font small = new Font("Comic Sans", Font.BOLD, 60);
-        Font big = new Font("Comic Sans", Font.BOLD, 20);
-        FontMetrics metr = getFontMetrics(small);
+        Font big = new Font("Comic Sans", Font.BOLD, 60);
+        Font small = new Font("Comic Sans", Font.BOLD, 20);
+        FontMetrics metr = getFontMetrics(big);
         FontMetrics metr2 = getFontMetrics(small);
 
         g.setColor(Color.white);
-        g.setFont(small);
+        g.setFont(big);
         
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
         
-        g.setFont(big);
+        g.setFont(small);
         g.drawString(msg2, (B_WIDTH - metr2.stringWidth(msg)) / 2 - 50, (B_HEIGHT / 2) + 50);
     }
 
     private void checkApple() {
-
-        if ((x[0] == apple_x) && (y[0] == apple_y)) {
+    	        
+    	if (checkIfInRange(x[0],y[0])) {
             dots++;
             locateApple();
             score++;
         }
     }
     
+    private boolean checkIfInRange(int x, int y) {
+    	
+    	if (x >= apple_x - 15 && x <= apple_x + 15)
+    		if (y >= apple_y - 15 && y <= apple_y + 15)
+    			return true;
+    	
+    	return false;
+    }
+    
     private void locateApple() {
     	
         int x = (int) rand.nextInt(RAND_POS);
-        while (x > B_WIDTH - 10)
+        //while ((x % 25 != 0) && (x > B_HEIGHT))
+        while(((x * DOT_SIZE) > B_WIDTH))
         	x = (int) rand.nextInt(RAND_POS); 
 
         int y = (int) rand.nextInt(RAND_POS);
-        while (y > B_HEIGHT - 10)
+        //while ((y % 25 != 0) && (x > B_WIDTH))
+        while( ((y * DOT_SIZE) > B_HEIGHT) || ((y * DOT_SIZE) < title.getHeight(null) + 20) )
         	y = (int) rand.nextInt(RAND_POS);
         
         apple_x = ((x * DOT_SIZE));
         apple_y = ((y * DOT_SIZE));
         
+        System.out.printf("Apple Location: ( %d , %d )\n" , apple_x , apple_y); 
     }
 
     private void move() {
@@ -252,16 +275,17 @@ public class Board extends JPanel implements ActionListener {
         }
 
         if (y[0] >= B_HEIGHT) {
-        	//y[0] = title.getHeight(null) + 20;
-        	y[0] = 0;
+        	y[0] = title.getHeight(null) + 10;
+//        	y[0] = 0;
         }
-        if (y[0] < 0) {
-        	y[0] = B_HEIGHT;
-        }	
-
-//        if (y[0] < title.getHeight(null)+ 20) {
+        
+//        if (y[0] < 0) {
 //        	y[0] = B_HEIGHT;
-//        }
+//        }	
+
+        if (y[0] < title.getHeight(null) + 10) {
+        	y[0] = B_HEIGHT;
+        }
 
         if (x[0] >= B_WIDTH) {
         	x[0] = 0;
