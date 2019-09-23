@@ -5,14 +5,14 @@ import javax.swing.JFrame;
 
 public class Snake extends JFrame {
 
-    public Snake() {
-        
-        initUI();
+    public Snake(int difficult) {
+  
+        initUI(difficult);
     }
     
-    private void initUI() {
+    private void initUI(int difficult) {
         
-        add(new Board());
+        add(new Board(difficult));
         
         setResizable(false);
         pack();
@@ -23,10 +23,6 @@ public class Snake extends JFrame {
     }
     
     public static void main(String[] args) {
-        
-        EventQueue.invokeLater(() -> {
-            JFrame ex = new Snake();
-            ex.setVisible(true);
-        });
+    	
     }
 }

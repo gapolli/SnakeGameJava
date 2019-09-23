@@ -21,10 +21,10 @@ public class StartGame {
 		
 		try 
 		{
-//			MainMenu main = new MainMenu(" Snake Game ");
-//			main.setVisible(true);
-			Snake snake = new Snake();
-			snake.setVisible(true);
+			MainMenu main = new MainMenu(" Snake Game ");
+			main.setVisible(true);
+//			Snake snake = new Snake();
+//			snake.setVisible(true);
 		}
 		catch(HeadlessException exception) 
 		{

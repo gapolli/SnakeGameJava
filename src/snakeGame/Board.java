@@ -12,7 +12,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.security.SecureRandom;
+import java.time.LocalTime;
+import java.util.TimerTask;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -23,16 +26,20 @@ public class Board extends JPanel implements ActionListener {
     private final int B_HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.5);
     private final int DOT_SIZE = 25; // the same pixel size as image
     private final int ALL_DOTS = (int) ((B_WIDTH*B_HEIGHT)/(Math.pow(DOT_SIZE, 2)));
-    private final int DELAY = 150;
+    private int DELAY = 150;
     
-    SecureRandom RAND_POS =  new SecureRandom();
+    private JPanel panelTitle;
     
+    private final int RAND_POS = 29;
+    
+    private SecureRandom rand = new SecureRandom();
+        
     private final int x[] = new int[ALL_DOTS];
     private final int y[] = new int[ALL_DOTS];
 
     private int dots;
-    private int apple_x;
-    private int apple_y;
+    private int apple_x = B_WIDTH / 2;
+    private int apple_y = B_HEIGHT / 2;
     private int score = 0;
 
     private boolean leftDirection = false;
@@ -42,18 +49,23 @@ public class Board extends JPanel implements ActionListener {
     private boolean inGame = true;
 
     private Timer timer;
+
     private Image bg;
     private Image apple;
     private Image head;
     private Image body;
+    private Image title;
     
     private Image l_head;
     private Image r_head;
     private Image u_head;
     private Image d_head;
+    
+    Board board;
 
-    public Board() {
-        initBoard();
+    public Board(int difficult) {
+    	DELAY = DELAY / difficult;  
+        initBoard();             
     }
     
     private void initBoard() {
@@ -61,7 +73,13 @@ public class Board extends JPanel implements ActionListener {
         addKeyListener(new TAdapter());
         setBackground(Color.black);
         setFocusable(true);
-
+       
+        this.panelTitle = new JPanel();
+		this.panelTitle.setBackground(Color.cyan);
+		this.panelTitle.setBorder(BorderFactory.createEtchedBorder());
+		
+		inGame = true;
+		
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         loadImages();
         initGame();
@@ -72,6 +90,9 @@ public class Board extends JPanel implements ActionListener {
     	//Apple image
         ImageIcon iia = new ImageIcon("resources/apple.png");
         apple = iia.getImage();
+        
+        // title image
+        title = Toolkit.getDefaultToolkit().createImage("resources/snaketitle.jpg");
         
         //Background image
         bg = Toolkit.getDefaultToolkit().createImage("resources/bg.jpg");
@@ -106,29 +127,22 @@ public class Board extends JPanel implements ActionListener {
         timer = new Timer(DELAY, this);
         timer.start();
     }
-
+    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
         
         doDrawing(g);
     }
     
     private void doDrawing(Graphics g) {
-        
-        if (inGame) {
-        	
-        	String score_msg = score + "";
-            Font small = new Font("Comic Sans", Font.BOLD, 24);
-            FontMetrics metr = getFontMetrics(small);
-
-            g.setColor(Color.white);
-            g.setFont(small);
-            g.drawString(score_msg, (B_WIDTH - metr.stringWidth(score_msg)) / 2, (B_HEIGHT - metr.stringWidth(score_msg)) / 10);
+    	g.drawImage(bg, 0, 0, null);
+    	g.drawImage(title, 0, 0, null);
+    	
+        if (inGame) {        	
+        	statistics(g);
             
-            g.drawImage(bg, 0, 0, null);
-            g.drawImage(apple, apple_x, apple_y, this);
+        	g.drawImage(apple, apple_x, apple_y, this);
 
             for (int z = 0; z < dots; z++) {
                 if (z == 0) {
@@ -145,16 +159,35 @@ public class Board extends JPanel implements ActionListener {
             gameOver(g);
         }        
     }
-
-    private void gameOver(Graphics g) {
-        
-        String msg = "Game Over";
-        Font small = new Font("Comic Sans", Font.BOLD, 20);
+    
+    private void statistics(Graphics g){
+    	String score_msg = "Score: " + score ;
+        Font small = new Font("Comic Sans", Font.BOLD, 24);
         FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
+        g.drawString(score_msg, 20, 35);
+       
+    }
+
+    private void gameOver(Graphics g) {
+        
+        String msg = "Game Over";
+        String msg2 = "Press \"R\" to retry or \"M\" to go to Main Menu";
+        
+        Font small = new Font("Comic Sans", Font.BOLD, 60);
+        Font big = new Font("Comic Sans", Font.BOLD, 20);
+        FontMetrics metr = getFontMetrics(small);
+        FontMetrics metr2 = getFontMetrics(small);
+
+        g.setColor(Color.white);
+        g.setFont(small);
+        
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
+        
+        g.setFont(big);
+        g.drawString(msg2, (B_WIDTH - metr2.stringWidth(msg)) / 2 - 50, (B_HEIGHT / 2) + 50);
     }
 
     private void checkApple() {
@@ -164,6 +197,21 @@ public class Board extends JPanel implements ActionListener {
             locateApple();
             score++;
         }
+    }
+    
+    private void locateApple() {
+    	
+        int x = (int) rand.nextInt(RAND_POS);
+        while (x > B_WIDTH - 10)
+        	x = (int) rand.nextInt(RAND_POS); 
+
+        int y = (int) rand.nextInt(RAND_POS);
+        while (y > B_HEIGHT - 10)
+        	y = (int) rand.nextInt(RAND_POS);
+        
+        apple_x = ((x * DOT_SIZE));
+        apple_y = ((y * DOT_SIZE));
+        
     }
 
     private void move() {
@@ -204,19 +252,23 @@ public class Board extends JPanel implements ActionListener {
         }
 
         if (y[0] >= B_HEIGHT) {
-            inGame = false;
+        	//y[0] = title.getHeight(null) + 20;
+        	y[0] = 0;
         }
-
         if (y[0] < 0) {
-            inGame = false;
-        }
+        	y[0] = B_HEIGHT;
+        }	
+
+//        if (y[0] < title.getHeight(null)+ 20) {
+//        	y[0] = B_HEIGHT;
+//        }
 
         if (x[0] >= B_WIDTH) {
-            inGame = false;
+        	x[0] = 0;
         }
 
         if (x[0] < 0) {
-            inGame = false;
+        	x[0] = B_WIDTH;
         }
         
         if (!inGame) {
@@ -224,16 +276,12 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void locateApple() {
-    	
-    	
-        int r = (int) (Math.random() * RAND_POS.nextInt(DOT_SIZE));
-        apple_x = ((r * DOT_SIZE));
 
-        r = (int) (Math.random() * RAND_POS.nextInt(DOT_SIZE));
-        apple_y = ((r * DOT_SIZE));
+    
+    private void close() {
+    	this.setVisible(false);
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -252,7 +300,17 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
 
             int key = e.getKeyCode();
-
+            
+            if ((key == KeyEvent.VK_R) && (!inGame)) {
+            	initBoard();
+            }
+            
+            if ((key == KeyEvent.VK_M) && (!inGame)) {
+            	close();
+    			MainMenu main = new MainMenu("Snake");
+    			main.setVisible(true);
+            }
+            
             if ((key == KeyEvent.VK_LEFT) && (!rightDirection)) {
                 leftDirection = true;
                 upDirection = false;
@@ -276,6 +334,7 @@ public class Board extends JPanel implements ActionListener {
                 rightDirection = false;
                 leftDirection = false;
             }
+
         }
     }
 }
