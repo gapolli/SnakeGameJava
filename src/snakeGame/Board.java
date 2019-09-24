@@ -198,7 +198,7 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(msg, (B_WIDTH - metr.stringWidth(msg)) / 2, B_HEIGHT / 2);
         
         g.setFont(small);
-        g.drawString(msg2, (B_WIDTH - metr2.stringWidth(msg)) / 2 - 50, (B_HEIGHT / 2) + 50);
+        g.drawString(msg2, (B_WIDTH - metr2.stringWidth(msg2)) / 2, (B_HEIGHT / 2) + 50);
     }
 
     private void checkApple() {
