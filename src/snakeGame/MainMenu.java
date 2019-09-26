@@ -43,7 +43,7 @@ public class MainMenu extends JFrame implements ActionListener{
 	private int difficult = 1;
 	
 	/** Método que chama o construtor da superclasse, define um titulo para o 'Frame' faz chamada
-	 * a três outros métodos da classe */	
+	 * a trás outros métodos da classe */	
 	public MainMenu(String title) throws HeadlessException {
 		
 		// super constructor
@@ -56,7 +56,7 @@ public class MainMenu extends JFrame implements ActionListener{
 	}
 	
 	/** Configura a 'janela' da aplicação, define o tamanho do menu principal, centraliza a janela,
-	 * determina que não é possível redimensionamento e estabele o que acontece ao fechar a aplicação. */
+	 * determina que é possível redimensionamento e estabelece o que acontece ao fechar a aplicação. */
 	private void setupWindow() {
 		
 		// set the screen size of Main Menu
@@ -70,14 +70,14 @@ public class MainMenu extends JFrame implements ActionListener{
 		// program will close if the window is closed
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// program cant be resizable
-		this.setResizable(false);
+		// program can be resizable
+		this.setResizable(true);
 		
 		// component distribution throughout the window
 		this.setLayout(null);
 	}
 	
-	/** Inicializa e configura os componentes da interface gráfica, como painéis e botões. */
+	/** Inicializa e configura os componentes da interface grÃ¡fica, como painÃ©is e botÃµes. */
 	private void initializeComponents() {
 		
 		this.panelStatus = new JPanel();
@@ -116,7 +116,7 @@ public class MainMenu extends JFrame implements ActionListener{
 
 	}
 	
-	/** Adiciona componentes inicializados no método 'initializeComponents' ao menu*/
+	/** Adiciona componentes inicializados no mÃ©todo 'initializeComponents' ao menu*/
 	private void addComponents() {
 		
 		this.panelStatus.add(labelStatus);
@@ -128,7 +128,7 @@ public class MainMenu extends JFrame implements ActionListener{
 		
 	}
 	
-	/** Sobrescreve o método da superclasse. Define o comportamento de cada botão do menu principal.*/	
+	/** Sobrescreve o mÃ©todo da superclasse. Define o comportamento de cada botÃ£o do menu principal.*/	
 	@Override
 	public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();

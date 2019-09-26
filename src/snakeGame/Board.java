@@ -26,8 +26,8 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
-//    private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
-	private final int B_WIDTH = 845;
+    private final int B_WIDTH = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.4);
+//	private final int B_WIDTH = 845;
     private final int B_HEIGHT = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.5);
     private final int DOT_SIZE = 25; // the same pixel size as image
     private final int ALL_DOTS = (int) ((B_WIDTH*B_HEIGHT)/(Math.pow(DOT_SIZE, 2)));
@@ -60,6 +60,7 @@ public class Board extends JPanel implements ActionListener {
     private Image title;
     private Image bg;
     private Image apple;
+    private Image appleResized;
     private Image head;
     private Image body;
     private Image l_head;
@@ -76,7 +77,7 @@ public class Board extends JPanel implements ActionListener {
         System.out.printf("Screen size: ( %d , %d )\n" , B_WIDTH , B_HEIGHT);  
     }
     
-    /** Verifica a dificuldade a partir de um int recebido como parâmetro. */
+    /** Verifica a dificuldade a partir de um int recebido como parãmetro. */
     private void setDifficulty(int d) {
     	switch (d) {
     	case 1 : difficulty = "Easy"; break;
@@ -86,7 +87,7 @@ public class Board extends JPanel implements ActionListener {
     	}
     }
     
-    /** Método que desenha e carrega os recursos do 'tabuleiro' onde o jogo acontece.*/
+    /** MÃ©todo que desenha e carrega os recursos do 'tabuleiro' onde o jogo acontece.*/
     private void initBoard() {
 
         addKeyListener(new TAdapter());
@@ -98,18 +99,23 @@ public class Board extends JPanel implements ActionListener {
 		this.panelTitle.setBorder(BorderFactory.createEtchedBorder());
 		
 		inGame = true;
+		score = 0;
+		dots = 3;
 		
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
         loadImages();
         initGame();
     }
     
-    /** Método que carrega as imagens utilizadas dentro do jogo.*/
+    /** MÃ©todo que carrega as imagens utilizadas dentro do jogo.*/
     private void loadImages() {
     	
     	//Apple image
         ImageIcon iia = new ImageIcon("resources/apple.png");
         apple = iia.getImage();
+        
+        //Apple image resized
+        appleResized = apple.getScaledInstance(50,50,0);
         
         // title image
         title = Toolkit.getDefaultToolkit().createImage("resources/snaketitle.jpg");
@@ -133,13 +139,13 @@ public class Board extends JPanel implements ActionListener {
         
     }
     
-    /** Método que inicia propriamente o jogo.*/
+    /** MÃ©todo que inicia propriamente o jogo.*/
     private void initGame() {
 
         dots = 3;
 
         for (int z = 0; z < dots; z++) {
-            x[z] = 50 - z * 10;
+            x[z] = 50 - z * DOT_SIZE;
             y[z] = 50;
         }
         
@@ -157,12 +163,12 @@ public class Board extends JPanel implements ActionListener {
     }
     
     private void doDrawing(Graphics g) {
-    	g.drawImage(bg, 0, 0, null);
-    	g.drawImage(title, 0, 0, null);
     	
-        if (inGame) {        	
+        if (inGame) { 
+        	g.drawImage(bg, 0, 0, this);
+        	g.drawImage(title, 0, 0, this);
+        	g.drawImage(appleResized, 5,2, this);
         	statistics(g);
-            
         	g.drawImage(apple, apple_x, apple_y, this);
 
             for (int z = 0; z < dots; z++) {
@@ -181,15 +187,15 @@ public class Board extends JPanel implements ActionListener {
         }        
     }
     
-    /** Mostra as estátiscias do jogo na tela. */
+    /** Mostra as estáticas do jogo na tela. */
     private void statistics(Graphics g){
-    	String score_msg = "Difficulty: " + difficulty + " Score: " + score;
-        Font small = new Font("Comic Sans", Font.BOLD, 24);
-        //FontMetrics metr = getFontMetrics(small);
-
-        g.setColor(Color.white);
+    	String score_msg = "" + score;
+        Font small = new Font("Comic Sans", Font.BOLD, 36);
+        
+        Color color = new Color(rand.nextInt());
+        g.setColor(color);
         g.setFont(small);
-        g.drawString(score_msg, 20, 35);
+        g.drawString(score_msg, 60, 40);
     }
 
 	/** Método responsável por mostrar uma mensagem de 'fim de jogo' na tela.*/
@@ -222,7 +228,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
     
-    /** Checa se a maçã está posicionada em um local válido */
+    /** Checa se a maçã está posicionada em um local vÃlido */
     private boolean checkIfInRange(int x, int y) {
     	
     	if (x >= apple_x - 15 && x <= apple_x + 15)
@@ -236,17 +242,15 @@ public class Board extends JPanel implements ActionListener {
     private void locateApple() {
     	
         int x = (int) rand.nextInt(RAND_POS);
-        //while ((x % 25 != 0) && (x > B_HEIGHT))
         while(((x * DOT_SIZE) > B_WIDTH))
         	x = (int) rand.nextInt(RAND_POS); 
 
         int y = (int) rand.nextInt(RAND_POS);
-        //while ((y % 25 != 0) && (x > B_WIDTH))
-        while( ((y * DOT_SIZE) > B_HEIGHT) || ((y * DOT_SIZE) < title.getHeight(null) + 20) )
+        while( ((y * DOT_SIZE) > B_HEIGHT) || ((y * DOT_SIZE) < title.getHeight(null) + (DOT_SIZE * 2)) )
         	y = (int) rand.nextInt(RAND_POS);
         
         apple_x = ((x * DOT_SIZE));
-        apple_y = ((y * DOT_SIZE) - 4);
+        apple_y = ((y * DOT_SIZE));
         
         System.out.printf("Apple Location: ( %d , %d )\n" , apple_x , apple_y); 
     }
@@ -283,33 +287,26 @@ public class Board extends JPanel implements ActionListener {
     /** Verifica quando há colisão da cobra. */
     private void checkCollision() {
 
-        for (int z = dots; z > 0; z--) {
+    	for (int z = dots; z > 0; z--) {
 
             if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
                 inGame = false;
             }
         }
-
-        if (y[0] >= B_HEIGHT) {
-        	y[0] = title.getHeight(null) + 10;
-//        	y[0] = 0;
-        }
         
-//        if (y[0] < 0) {
-//        	y[0] = B_HEIGHT;
-//        }	
+    		if (y[0] >= B_HEIGHT) {
+        		y[0] = title.getHeight(null) + DOT_SIZE;
+            }
+            if (y[0] < title.getHeight(null) + DOT_SIZE) {
+            	y[0] = B_HEIGHT;
+            }
+            if (x[0] >= B_WIDTH) {
+            	x[0] = 0;
+            }
+    		if (x[0] < 0) {
+            	x[0] = B_WIDTH;
+            }
 
-        if (y[0] < title.getHeight(null) + 10) {
-        	y[0] = B_HEIGHT;
-        }
-
-        if (x[0] >= B_WIDTH) {
-        	x[0] = 0;
-        }
-
-        if (x[0] < 0) {
-        	x[0] = B_WIDTH;
-        }
         
         if (!inGame) {
             timer.stop();
@@ -338,7 +335,7 @@ public class Board extends JPanel implements ActionListener {
     /** Classe que mapeia as teclas do teclado e define sua função.
     * @author Mateus Pim Santos
     * @version 1.0
-    * @since Release 01 da aplicação
+    * @since Release 01 da aplicaÃ§Ã£o
     */
     private class TAdapter extends KeyAdapter {
     	
