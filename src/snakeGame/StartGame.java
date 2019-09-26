@@ -1,30 +1,24 @@
 //StartGame.java
 
-
 package snakeGame;
 
-import java.awt.HeadlessException;
-import java.io.File;
-import java.util.Scanner;
+/** Classe main que fará a chamada do menu da aplicação, para que o jogo possa ser iniciado.
+* @author Max Lucio Martins de Assis
+* @version 1.0
+* @since Release 01 da aplicação
+*/
 
-import javax.print.attribute.standard.Media;
-import javax.swing.JFrame;
+import java.awt.HeadlessException;
 import javax.swing.JOptionPane;
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import java.net.URL;
 
 public class StartGame {
 
-	public static void main(String[] args) {
-		
-		try 
+	/** Método main que instancia um objeto menu e o torna visível na tela */
+	public static void main(String[] args) {		
+		try
 		{
 			MainMenu main = new MainMenu(" Snake Game ");
 			main.setVisible(true);
-//			Snake snake = new Snake();
-//			snake.setVisible(true);
 		}
 		catch(HeadlessException exception) 
 		{
@@ -34,9 +28,6 @@ public class StartGame {
 		{
 			JOptionPane.showMessageDialog(null, " Erro ao executar o programa! "+ exception.toString()) ;
 		}
-		
-		
-
 	}
 	
 

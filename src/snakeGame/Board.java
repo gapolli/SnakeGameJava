@@ -12,13 +12,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.security.SecureRandom;
-import java.time.LocalTime;
-import java.util.TimerTask;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+/** Classe que inicia o 'tabuleiro' do jogo. Desenha a interface gráfica e implementa as funcionalidades
+ * do jogo.
+* @author Mateus Pim Santos
+* @version 1.0
+* @since Release 01 da aplicação
+*/
 
 public class Board extends JPanel implements ActionListener {
 
@@ -63,6 +67,7 @@ public class Board extends JPanel implements ActionListener {
     private Image u_head;
     private Image d_head;
     
+    /** Inicializa o 'tabuleiro' e implementa a dificuldade. */
     public Board(int difficult) {
     	DELAY = DELAY / difficult;    
     	setDifficulty(difficult);
@@ -71,6 +76,7 @@ public class Board extends JPanel implements ActionListener {
         System.out.printf("Screen size: ( %d , %d )\n" , B_WIDTH , B_HEIGHT);  
     }
     
+    /** Verifica a dificuldade a partir de um int recebido como parâmetro. */
     private void setDifficulty(int d) {
     	switch (d) {
     	case 1 : difficulty = "Easy"; break;
@@ -80,6 +86,7 @@ public class Board extends JPanel implements ActionListener {
     	}
     }
     
+    /** Método que desenha e carrega os recursos do 'tabuleiro' onde o jogo acontece.*/
     private void initBoard() {
 
         addKeyListener(new TAdapter());
@@ -96,7 +103,8 @@ public class Board extends JPanel implements ActionListener {
         loadImages();
         initGame();
     }
-
+    
+    /** Método que carrega as imagens utilizadas dentro do jogo.*/
     private void loadImages() {
     	
     	//Apple image
@@ -124,7 +132,8 @@ public class Board extends JPanel implements ActionListener {
         head = r_head; // default head for the snake
         
     }
-
+    
+    /** Método que inicia propriamente o jogo.*/
     private void initGame() {
 
         dots = 3;
@@ -172,16 +181,18 @@ public class Board extends JPanel implements ActionListener {
         }        
     }
     
+    /** Mostra as estátiscias do jogo na tela. */
     private void statistics(Graphics g){
     	String score_msg = "Difficulty: " + difficulty + " Score: " + score;
         Font small = new Font("Comic Sans", Font.BOLD, 24);
-        FontMetrics metr = getFontMetrics(small);
+        //FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
         g.drawString(score_msg, 20, 35);
     }
 
+	/** Método responsável por mostrar uma mensagem de 'fim de jogo' na tela.*/
     private void gameOver(Graphics g) {
         
         String msg = "Game Over";
@@ -200,7 +211,8 @@ public class Board extends JPanel implements ActionListener {
         g.setFont(small);
         g.drawString(msg2, (B_WIDTH - metr2.stringWidth(msg2)) / 2, (B_HEIGHT / 2) + 50);
     }
-
+    
+    /** Checa se a maçã foi 'capturada' pela cobra. */
     private void checkApple() {
     	        
     	if (checkIfInRange(x[0],y[0])) {
@@ -210,6 +222,7 @@ public class Board extends JPanel implements ActionListener {
         }
     }
     
+    /** Checa se a maçã está posicionada em um local válido */
     private boolean checkIfInRange(int x, int y) {
     	
     	if (x >= apple_x - 15 && x <= apple_x + 15)
@@ -219,6 +232,7 @@ public class Board extends JPanel implements ActionListener {
     	return false;
     }
     
+    /** Define aleatoriamente o local onde a maçã aparecerá */
     private void locateApple() {
     	
         int x = (int) rand.nextInt(RAND_POS);
@@ -232,11 +246,12 @@ public class Board extends JPanel implements ActionListener {
         	y = (int) rand.nextInt(RAND_POS);
         
         apple_x = ((x * DOT_SIZE));
-        apple_y = ((y * DOT_SIZE));
+        apple_y = ((y * DOT_SIZE) - 4);
         
         System.out.printf("Apple Location: ( %d , %d )\n" , apple_x , apple_y); 
     }
-
+    
+    /** Decreta o funcionamento da movimentação da cobra. */
     private void move() {
 
         for (int z = dots; z > 0; z--) {
@@ -264,7 +279,8 @@ public class Board extends JPanel implements ActionListener {
             head = d_head;
         }
     }
-
+    
+    /** Verifica quando há colisão da cobra. */
     private void checkCollision() {
 
         for (int z = dots; z > 0; z--) {
@@ -301,7 +317,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
 
-    
+    /** Fecha o jogo */
     private void close() {
     	this.setVisible(false);
     }
@@ -317,9 +333,16 @@ public class Board extends JPanel implements ActionListener {
 
         repaint();
     }
-
+    
+    
+    /** Classe que mapeia as teclas do teclado e define sua função.
+    * @author Mateus Pim Santos
+    * @version 1.0
+    * @since Release 01 da aplicação
+    */
     private class TAdapter extends KeyAdapter {
-
+    	
+    	/** Define o comportamento de cada tecla e o que acontece quando a mesma é pressionada */
         @Override
         public void keyPressed(KeyEvent e) {
 

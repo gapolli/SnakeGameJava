@@ -23,6 +23,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 
+/** Classe referente ao menu principal da aplicação.
+* @author Victor Gomes Sampaio
+* @version 1.0
+* @since Release 01 da aplicação
+*/
+
 public class MainMenu extends JFrame implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
@@ -36,6 +42,8 @@ public class MainMenu extends JFrame implements ActionListener{
 	
 	private int difficult = 1;
 	
+	/** Método que chama o construtor da superclasse, define um titulo para o 'Frame' faz chamada
+	 * a três outros métodos da classe */	
 	public MainMenu(String title) throws HeadlessException {
 		
 		// super constructor
@@ -47,6 +55,8 @@ public class MainMenu extends JFrame implements ActionListener{
 		addComponents();
 	}
 	
+	/** Configura a 'janela' da aplicação, define o tamanho do menu principal, centraliza a janela,
+	 * determina que não é possível redimensionamento e estabele o que acontece ao fechar a aplicação. */
 	private void setupWindow() {
 		
 		// set the screen size of Main Menu
@@ -67,6 +77,7 @@ public class MainMenu extends JFrame implements ActionListener{
 		this.setLayout(null);
 	}
 	
+	/** Inicializa e configura os componentes da interface gráfica, como painéis e botões. */
 	private void initializeComponents() {
 		
 		this.panelStatus = new JPanel();
@@ -104,7 +115,8 @@ public class MainMenu extends JFrame implements ActionListener{
 		
 
 	}
-
+	
+	/** Adiciona componentes inicializados no método 'initializeComponents' ao menu*/
 	private void addComponents() {
 		
 		this.panelStatus.add(labelStatus);
@@ -116,6 +128,7 @@ public class MainMenu extends JFrame implements ActionListener{
 		
 	}
 	
+	/** Sobrescreve o método da superclasse. Define o comportamento de cada botão do menu principal.*/	
 	@Override
 	public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
@@ -133,14 +146,6 @@ public class MainMenu extends JFrame implements ActionListener{
         	case "exit":
         		System.exit(0);
         		break;
-        }
-       		
+        }       		
 	}
-
-	public static void main(String[] args) {
-	}
-	
-
-
-
 }
