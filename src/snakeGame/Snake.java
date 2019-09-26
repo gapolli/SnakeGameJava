@@ -1,15 +1,23 @@
 package snakeGame;
 
-import java.awt.EventQueue;
 import javax.swing.JFrame;
+
+/** Classe responsável por iniciar o jogo. É chamada quando o botão 'Start' do menu
+ * principal é clicado.
+* @author Gustavo Adrien Polli
+* @version 1.0
+* @since Release 01 da aplicação
+*/
 
 public class Snake extends JFrame {
 
-    public Snake(int difficult) {
-  
+	/** Inicializa o jogo e indica a dificuldade escolhida.*/
+    public Snake(int difficult) {  
         initUI(difficult);
     }
     
+    /** Inicia a interface gráfica do jogo, instanciando um novo 'Board' e configurando
+     * titulo, posição na tela, redimensionamento e comportamento ao fechar. */ 
     private void initUI(int difficult) {
         
         add(new Board(difficult));
@@ -20,9 +28,5 @@ public class Snake extends JFrame {
         setTitle("Snake");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
-    
-    public static void main(String[] args) {
-    	
     }
 }

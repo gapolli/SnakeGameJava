@@ -23,6 +23,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 
+/** Classe referente ao menu principal da aplicação.
+* @author Victor Gomes Sampaio
+* @version 1.0
+* @since Release 01 da aplicação
+*/
+
 public class MainMenu extends JFrame implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
@@ -36,6 +42,8 @@ public class MainMenu extends JFrame implements ActionListener{
 	
 	private int difficult = 1;
 	
+	/** Método que chama o construtor da superclasse, define um titulo para o 'Frame' faz chamada
+	 * a trás outros métodos da classe */	
 	public MainMenu(String title) throws HeadlessException {
 		
 		// super constructor
@@ -47,6 +55,8 @@ public class MainMenu extends JFrame implements ActionListener{
 		addComponents();
 	}
 	
+	/** Configura a 'janela' da aplicação, define o tamanho do menu principal, centraliza a janela,
+	 * determina que é possível redimensionamento e estabelece o que acontece ao fechar a aplicação. */
 	private void setupWindow() {
 		
 		// set the screen size of Main Menu
@@ -60,13 +70,14 @@ public class MainMenu extends JFrame implements ActionListener{
 		// program will close if the window is closed
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// program cant be resizable
-		this.setResizable(false);
+		// program can be resizable
+		this.setResizable(true);
 		
 		// component distribution throughout the window
 		this.setLayout(null);
 	}
 	
+	/** Inicializa e configura os componentes da interface grÃ¡fica, como painÃ©is e botÃµes. */
 	private void initializeComponents() {
 		
 		this.panelStatus = new JPanel();
@@ -104,7 +115,8 @@ public class MainMenu extends JFrame implements ActionListener{
 		
 
 	}
-
+	
+	/** Adiciona componentes inicializados no mÃ©todo 'initializeComponents' ao menu*/
 	private void addComponents() {
 		
 		this.panelStatus.add(labelStatus);
@@ -116,6 +128,7 @@ public class MainMenu extends JFrame implements ActionListener{
 		
 	}
 	
+	/** Sobrescreve o mÃ©todo da superclasse. Define o comportamento de cada botÃ£o do menu principal.*/	
 	@Override
 	public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
@@ -133,14 +146,6 @@ public class MainMenu extends JFrame implements ActionListener{
         	case "exit":
         		System.exit(0);
         		break;
-        }
-       		
+        }       		
 	}
-
-	public static void main(String[] args) {
-	}
-	
-
-
-
 }
